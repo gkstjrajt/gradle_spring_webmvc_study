@@ -1,0 +1,10 @@
+[DEBUG] [2020-10-19 12:29] testDataSource()
+[DEBUG] [2020-10-19 12:29] DataSource HikariDataSource (HikariPool-1)
+[DEBUG] [2020-10-19 12:29] LoginTimeout30
+[DEBUG] [2020-10-19 12:32] testDataSource()
+[DEBUG] [2020-10-19 12:32] DataSource HikariDataSource (HikariPool-1)
+[DEBUG] [2020-10-19 12:32] LoginTimeout30
+[DEBUG] [2020-10-19 12:32] testSqlSession()
+[DEBUG] [2020-10-19 12:32] session org.apache.ibatis.session.defaults.DefaultSqlSession@54837be1
+[DEBUG] [2020-10-19 12:32] testSqlSessionGetConnection()
+[DEBUG] [2020-10-19 12:32] con HikariProxyConnection@147544478 wrapping oracle.jdbc.driver.T4CConnection@54efae44
