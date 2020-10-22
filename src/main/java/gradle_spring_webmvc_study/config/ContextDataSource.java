@@ -34,8 +34,4 @@ public class ContextDataSource {
 		return dataSource;
 	}
 	
-	@Bean
-	public PlatformTransactionManager transactionManager() {
-		return new DataSourceTransactionManager(dataSource());
-	}
 }
