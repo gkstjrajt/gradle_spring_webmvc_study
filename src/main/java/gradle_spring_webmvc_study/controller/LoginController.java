@@ -1,20 +1,67 @@
 package gradle_spring_webmvc_study.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import gradle_spring_webmvc_study.dto.Code;
-import gradle_spring_webmvc_study.dto.Login;
+import gradle_spring_webmvc_study.dto.AuthInfo;
+import gradle_spring_webmvc_study.dto.LoginCommand;
+import gradle_spring_webmvc_study.exception.WrongIdPasswordException;
+import gradle_spring_webmvc_study.service.AuthService;
 
 @Controller
+@RequestMapping("/login")
 public class LoginController {
+	@Autowired
+	private AuthService authService;
 
-	@RequestMapping("/login")
+	@GetMapping												// value 속성은 Cookie이름을 지정 (이름이 Remember인 쿠키를 Cookie 타입으로 전달받음, 지정한 이름을 가진 쿠키가 존재하지 않을 수도 있다면 required 속성을 false로 지정
+	public String form(LoginCommand loginCommand, @CookieValue(value="REMEMBER", required = false) Cookie rCookie) {
+		if(rCookie != null) {
+			loginCommand.setEmail(rCookie.getValue());
+			loginCommand.setRememberEmail(true);
+		}
+		return "/login/form";
+	}
+
+	@PostMapping
+	public String submit(@Valid LoginCommand loginCommand, Errors errors, HttpSession session, HttpServletResponse response) {
+//		new LoginCommandValidator().validate(loginCommand, errors);
+		if (errors.hasErrors())
+			return "/login/form";
+		try {
+			AuthInfo authInfo = authService.authenicate(loginCommand.getEmail(), loginCommand.getPassword());
+			// 세션에 authInfo 저장해야함
+			session.setAttribute("authInfo", authInfo);
+			
+			Cookie rememberCookie = new Cookie("REMEMBER", loginCommand.getEmail());
+			rememberCookie.setPath("/");
+			if(loginCommand.isRememberEmail()) {
+				rememberCookie.setMaxAge(60 * 60 * 24 * 30);
+			} else {
+				rememberCookie.setMaxAge(0);
+			}
+			response.addCookie(rememberCookie);
+			
+			return "/login/loginSuccess";
+		} catch (WrongIdPasswordException ex) {
+			errors.reject("idPasswordNotMatching");
+			return "/login/form";
+		}
+	}
+}
+
+/*
+ 	@RequestMapping("/login")
 	public String form(Login login) {
 		return "login/loginForm";
 	}
@@ -73,5 +120,4 @@ public class LoginController {
 	public String result(@ModelAttribute("login") Login login) {
 		return "login/result";
 	}
-	
-}
+ */

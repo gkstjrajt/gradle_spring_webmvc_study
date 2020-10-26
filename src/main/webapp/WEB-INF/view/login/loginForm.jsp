@@ -29,12 +29,13 @@
 			<label for="favorite">선호 OS : </label>
 			<form:checkboxes path="favorite" items="${favorites}" delimiter="  "/>
 		</p>
-		<p>
+		<%-- <p>${codes}</p> --%>
+		<%-- <p>
 			<label for="codes">공부 : </label>
 				<c:forEach items="${codes}" var="subject" varStatus="vs">
 					<form:checkbox name="subject[${vs.index}].code" value="subject[${vs.index}].${codes.code}" path="codes"/>
 				</c:forEach>
-		</p>
+		</p> --%>
 			<input type="submit" value="결과보기">
 	</form:form>
 </body>
